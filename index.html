@@ -1,0 +1,686 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trauma Clarity & Therapy Fit</title>
+<style>
+  :root {
+    --bg: #faf7f2;
+    --surface: #ffffff;
+    --text: #2a2a2a;
+    --muted: #6b6660;
+    --accent: #4a6b6b;
+    --accent-hover: #3a5757;
+    --accent-soft: #e8efed;
+    --border: #e0d8cc;
+    --border-strong: #c8bfb1;
+    --danger: #a04848;
+    --danger-soft: #f5e6e6;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .app {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+  }
+  h1 {
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1.25;
+    margin: 0 0 16px;
+    letter-spacing: -0.01em;
+  }
+  h2 {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 12px;
+  }
+  p { margin: 0 0 12px; }
+  .lede { color: var(--muted); font-size: 15px; }
+  .progress {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .progress-bar {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-bottom: 28px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.3s ease;
+  }
+  .question {
+    font-size: 22px;
+    font-weight: 500;
+    line-height: 1.35;
+    margin: 4px 0 24px;
+    letter-spacing: -0.01em;
+  }
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    font: inherit;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.12s ease;
+    line-height: 1.45;
+  }
+  .option:hover { border-color: var(--border-strong); }
+  .option.selected {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .option:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 32px;
+  }
+  .btn {
+    font: inherit;
+    padding: 11px 24px;
+    border-radius: 8px;
+    border: 1px solid var(--border-strong);
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.12s ease;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn.primary {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+  .btn.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); color: white; }
+  .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .btn:disabled:hover { border-color: var(--border-strong); color: var(--text); }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 22px;
+    margin-bottom: 14px;
+  }
+  .card.emergency {
+    background: var(--danger-soft);
+    border-color: #e8c8c8;
+  }
+  .card.emergency h2 { color: var(--danger); }
+  .card ul { margin: 0; padding-left: 20px; }
+  .card li { margin-bottom: 8px; }
+  .card li:last-child { margin-bottom: 0; }
+  .result-headline {
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+    margin: 0 0 12px;
+  }
+  .result-opener {
+    color: var(--muted);
+    font-size: 16px;
+    margin-bottom: 24px;
+  }
+  .resources { font-size: 14px; }
+  .resources a { color: var(--accent); text-decoration: none; }
+  .resources a:hover { text-decoration: underline; }
+  .resources li { line-height: 1.5; }
+  .footnote {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 32px;
+    line-height: 1.5;
+  }
+  @media (max-width: 480px) {
+    .app { padding: 24px 16px 60px; }
+    h1 { font-size: 22px; }
+    .question { font-size: 19px; }
+    .result-headline { font-size: 23px; }
+    .btn { padding: 10px 18px; }
+  }
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+
+<script type="application/json" id="questionnaire-data">
+{"id":"sg_trauma_clarity_therapy_match_v1","title":"Trauma Clarity & Therapy Fit","version":"1.1.0","disclaimer":"This is not a diagnosis, crisis tool, or substitute for professional care. It is designed to help you clarify patterns, therapy needs, and next steps.","emergencyNote":"If you feel at risk of self-harm, harming someone else, or unable to stay safe, contact emergency services, Samaritans of Singapore at 1767, or go to the nearest emergency department.","scoringDimensions":["safety_risk","trauma_activation","avoidance","unfinished_meaning","relationship_repair","adhd_support","therapy_fit","readiness_for_processing","help_seeking_barrier","small_city_threat_map"]}
+</script>
+
+<script>
+const DIMENSIONS = ["safety_risk","trauma_activation","avoidance","unfinished_meaning","relationship_repair","adhd_support","therapy_fit","readiness_for_processing","help_seeking_barrier","small_city_threat_map"];
+
+const QUESTIONS = [
+  {id:"q1",question:"When you think about this person moving back to Singapore, what feels most true right now?",options:[
+    {label:"I feel uncomfortable, but I can still function.",scores:{trauma_activation:1}},
+    {label:"I feel anxious enough that it changes where I go or what I do.",scores:{trauma_activation:2,avoidance:2}},
+    {label:"I feel panicky, trapped, or like Singapore no longer feels safe.",scores:{trauma_activation:3,avoidance:3,safety_risk:1}},
+    {label:"I feel like I might hurt myself, lose control, or cannot stay safe.",scores:{safety_risk:5},flag:"urgent_support"}
+  ]},
+  {id:"q2",question:"What happens in your body when you imagine bumping into him?",options:[
+    {label:"Mostly thoughts; my body stays fairly calm.",scores:{}},
+    {label:"Tension, faster heartbeat, stomach drop, or restlessness.",scores:{trauma_activation:1}},
+    {label:"Panic-like symptoms, freezing, nausea, shaking, or wanting to escape.",scores:{trauma_activation:3}},
+    {label:"I shut down, dissociate, go blank, or feel unreal.",scores:{trauma_activation:3,readiness_for_processing:-2}}
+  ]},
+  {id:"q3",question:"How much are you avoiding places, events, or normal routines because of this?",options:[
+    {label:"Not much; I still do most things.",scores:{}},
+    {label:"A little; I check or plan more than usual.",scores:{avoidance:1}},
+    {label:"A lot; I avoid areas, people, or situations where he might be.",scores:{avoidance:3}},
+    {label:"My world feels smaller because of it.",scores:{avoidance:4,trauma_activation:2}}
+  ]},
+  {id:"q4",question:"Which part feels most distressing?",options:[
+    {label:"Seeing him unexpectedly.",scores:{trauma_activation:2,avoidance:1}},
+    {label:"What he represents from the past.",scores:{unfinished_meaning:2,trauma_activation:1}},
+    {label:"Guilt, shame, or confusion about what happened.",scores:{unfinished_meaning:3,relationship_repair:1}},
+    {label:"How this affects my current relationship.",scores:{relationship_repair:3}}
+  ]},
+  {id:"q5",question:"How clear is your memory of the timeline and what happened?",options:[
+    {label:"Very clear; I can explain the sequence honestly.",scores:{}},
+    {label:"Somewhat clear, but there are gaps.",scores:{unfinished_meaning:1,adhd_support:1}},
+    {label:"Unclear; I avoid reconstructing it because it feels overwhelming.",scores:{unfinished_meaning:3,avoidance:2,adhd_support:1}},
+    {label:"I am not sure whether I forgot, blocked it out, or do not want to face it.",scores:{unfinished_meaning:4,avoidance:2,adhd_support:2}}
+  ]},
+  {id:"q6",question:"What question keeps looping the most?",options:[
+    {label:"Why did this affect me so much?",scores:{unfinished_meaning:2}},
+    {label:"What exactly happened and what did it mean?",scores:{unfinished_meaning:3}},
+    {label:"What does this say about me?",scores:{unfinished_meaning:2,trauma_activation:1}},
+    {label:"How do I stop this from damaging my current relationship?",scores:{relationship_repair:3}}
+  ]},
+  {id:"q7",question:"How much does secrecy or cheating from that period still affect the current relationship?",options:[
+    {label:"It has been discussed and mostly repaired.",scores:{}},
+    {label:"It comes up sometimes, but we can talk about it.",scores:{relationship_repair:1}},
+    {label:"It is unresolved and creates mistrust, defensiveness, or shutdown.",scores:{relationship_repair:3}},
+    {label:"It feels like two separate issues: trauma from him and betrayal in our relationship.",scores:{relationship_repair:4,unfinished_meaning:2}}
+  ]},
+  {id:"q8",question:"What kind of support from your current partner would help most?",options:[
+    {label:"Calm reassurance without pressure.",scores:{therapy_fit:1}},
+    {label:"Help making a plan for possible encounters.",scores:{avoidance:1,adhd_support:1}},
+    {label:"Structured conversations about what happened and what I need now.",scores:{relationship_repair:2,unfinished_meaning:1}},
+    {label:"Less discussion with my partner and more work with a therapist first.",scores:{therapy_fit:2,readiness_for_processing:1}}
+  ]},
+  {id:"q9",question:"What is missing from your current therapy?",options:[
+    {label:"Nothing major; I mostly need patience.",scores:{}},
+    {label:"Clear goals and a treatment plan.",scores:{therapy_fit:3,adhd_support:1}},
+    {label:"Concrete tools for panic, avoidance, or intrusive thoughts.",scores:{therapy_fit:3,trauma_activation:1}},
+    {label:"A therapist who directly understands trauma, ADHD, and relationship betrayal.",scores:{therapy_fit:4,adhd_support:2,relationship_repair:1}}
+  ]},
+  {id:"q10",question:"Which therapy style sounds most useful right now?",options:[
+    {label:"Skills first: grounding, emotional regulation, and practical coping plans.",scores:{therapy_fit:2,readiness_for_processing:-1}},
+    {label:"Process the trauma directly so it stops feeling so alive.",scores:{readiness_for_processing:3,trauma_activation:1}},
+    {label:"Understand the story, beliefs, guilt, and meaning.",scores:{unfinished_meaning:3,readiness_for_processing:1}},
+    {label:"Repair the current relationship and rebuild trust.",scores:{relationship_repair:4}}
+  ]},
+  {id:"q11",question:"Because of ADHD, what would make therapy easier to follow?",options:[
+    {label:"I do not need ADHD-specific support.",scores:{}},
+    {label:"Written summaries after each session.",scores:{adhd_support:2}},
+    {label:"Clear homework, reminders, and simple tracking.",scores:{adhd_support:3}},
+    {label:"A visual timeline, shared notes, and repeated review because I lose the thread.",scores:{adhd_support:4,unfinished_meaning:1}}
+  ]},
+  {id:"q12",question:"If you bumped into him tomorrow, what would probably happen?",options:[
+    {label:"I could stay calm and leave if needed.",scores:{}},
+    {label:"I would feel anxious but could follow a plan.",scores:{trauma_activation:1,avoidance:1}},
+    {label:"I might freeze, panic, spiral, or lose the rest of the day.",scores:{trauma_activation:3,avoidance:2}},
+    {label:"I have no plan and feel afraid of what I might do or feel.",scores:{trauma_activation:4,avoidance:3,safety_risk:1}}
+  ]},
+  {id:"q13",question:"What would 'closure' actually mean?",options:[
+    {label:"I can live my life without scanning for him.",scores:{avoidance:2}},
+    {label:"I understand what happened and stop looping over it.",scores:{unfinished_meaning:3}},
+    {label:"I can see him or hear about him without my body reacting strongly.",scores:{trauma_activation:3}},
+    {label:"I can be fully honest and present in my current relationship.",scores:{relationship_repair:3}}
+  ]},
+  {id:"q14",question:"How ready do you feel to work on this directly?",options:[
+    {label:"Not ready; I need stabilisation first.",scores:{readiness_for_processing:-3,therapy_fit:1}},
+    {label:"Somewhat ready, but I need a slow and structured approach.",scores:{readiness_for_processing:1,therapy_fit:2}},
+    {label:"Ready; I want focused trauma work.",scores:{readiness_for_processing:3,therapy_fit:1}},
+    {label:"Ready, but I also need relationship repair alongside it.",scores:{readiness_for_processing:2,relationship_repair:3}}
+  ]},
+  {id:"q15",question:"What should the next therapist be best at?",options:[
+    {label:"Trauma processing with EMDR, CPT, trauma-focused CBT, or Prolonged Exposure.",scores:{readiness_for_processing:3,therapy_fit:2}},
+    {label:"ADHD-friendly structure and accountability.",scores:{adhd_support:4,therapy_fit:2}},
+    {label:"Relationship betrayal, secrecy, and trust repair.",scores:{relationship_repair:4,therapy_fit:1}},
+    {label:"Anxiety, grounding, panic tools, and getting life moving again.",scores:{trauma_activation:2,avoidance:2,therapy_fit:2}}
+  ]},
+  {id:"q16",question:"What feels hardest about him being back in Singapore?",options:[
+    {label:"Singapore feels too small. I feel like I could bump into him anywhere.",scores:{small_city_threat_map:4,avoidance:2,trauma_activation:1}},
+    {label:"We may have overlapping places, people, or routines.",scores:{small_city_threat_map:3,avoidance:2}},
+    {label:"I worry I will lose control of my emotions if I see him.",scores:{trauma_activation:3,small_city_threat_map:1}},
+    {label:"It is less about Singapore and more about what he represents.",scores:{unfinished_meaning:3,trauma_activation:1}}
+  ]},
+  {id:"q17",question:"When you are struggling, what do you usually do first?",options:[
+    {label:"I tell someone clearly and ask for help.",scores:{}},
+    {label:"I hint that I am not okay, but I do not always say what I need.",scores:{help_seeking_barrier:2,relationship_repair:1}},
+    {label:"I keep it to myself until it becomes obvious.",scores:{help_seeking_barrier:3,avoidance:1}},
+    {label:"I minimise it because I do not want to burden people or make things messy.",scores:{help_seeking_barrier:4,unfinished_meaning:1}}
+  ]},
+  {id:"q18",question:"Which sentence fits you best?",options:[
+    {label:"I can talk about feelings once the conversation starts.",scores:{help_seeking_barrier:1}},
+    {label:"I understand my feelings, but I do not always know how to ask for what I need.",scores:{help_seeking_barrier:3,therapy_fit:1}},
+    {label:"I wait until I have the 'right' words, then sometimes say nothing.",scores:{help_seeking_barrier:3,adhd_support:1}},
+    {label:"I open up, but only after things have already built up inside me.",scores:{help_seeking_barrier:2,trauma_activation:1}}
+  ]},
+  {id:"q19",question:"When you imagine asking for help, what stops you most?",options:[
+    {label:"I do not want to look weak or needy.",scores:{help_seeking_barrier:3,unfinished_meaning:1}},
+    {label:"I do not want to upset my partner or make things worse.",scores:{help_seeking_barrier:3,relationship_repair:2}},
+    {label:"I am not sure what I need, so I say nothing.",scores:{help_seeking_barrier:4,therapy_fit:1,adhd_support:1}},
+    {label:"Part of me feels I should be over this already.",scores:{unfinished_meaning:3,trauma_activation:1}}
+  ]},
+  {id:"q20",question:"What do you most wish someone understood without you having to explain everything?",options:[
+    {label:"I am not trying to be difficult. I am trying to feel safe.",scores:{trauma_activation:2,help_seeking_barrier:1}},
+    {label:"I do not always know what I need until later.",scores:{adhd_support:2,help_seeking_barrier:2}},
+    {label:"I feel guilty that this still affects people around me.",scores:{unfinished_meaning:2,relationship_repair:2}},
+    {label:"I want to move forward, but part of me is still bracing for impact.",scores:{trauma_activation:2,avoidance:2,small_city_threat_map:1}}
+  ]}
+];
+
+const ARCHETYPES = [
+  {
+    key:"not_just_the_person",
+    condition:(s)=>s.unfinished_meaning>=8 && s.trauma_activation>=6,
+    title:"You may not be reacting only to him",
+    hiddenInsight:"He may be the trigger, but the deeper fear may be returning to the emotional state, choices, secrecy, shame, or confusion from that period. This is probably not as simple as 'I do not want to see him.' It may be 'I do not want to become that version of myself again.'",
+    needs:[
+      "A therapist who works with shame, identity, and meaning, not only symptoms.",
+      "A clear separation between 'who I was then' and 'who I am choosing to be now'.",
+      "Permission to define closure on your own terms, not through contact with him."
+    ],
+    thisWeek:[
+      "Write two short lists: 'Who I was then' and 'Who I am now'. Five bullets max each.",
+      "Name three choices you can make now that you could not make then.",
+      "Avoid seeking closure through him unless a therapist agrees it is safe and useful."
+    ],
+    modalities:["Cognitive Processing Therapy (CPT)","Trauma-focused CBT","Schema therapy"]
+  },
+  {
+    key:"two_repairs_needed",
+    condition:(s)=>s.relationship_repair>=8 && s.trauma_activation>=5,
+    title:"There may be two recoveries happening at once",
+    hiddenInsight:"One recovery is from what happened with him. The other is repairing trust in your current relationship after secrecy or betrayal. Trauma explains why something hurts. It does not automatically repair the impact on the person beside you.",
+    needs:[
+      "Individual trauma therapy and separate space for couples repair.",
+      "A boundary plan about this person agreed with your partner before any accidental encounter.",
+      "Clarity that therapy is not a shield against accountability."
+    ],
+    thisWeek:[
+      "Have one short conversation with your partner about what they need to feel safe now.",
+      "Draft a one-sentence boundary about contact with this person.",
+      "Decide which therapist is for you alone, and whether couples work is a separate track."
+    ],
+    modalities:["Individual trauma therapy (EMDR or CPT)","Couples therapy","Emotionally Focused Therapy"]
+  },
+  {
+    key:"small_city_threat_map",
+    condition:(s)=>s.small_city_threat_map>=6,
+    title:"Your brain may have turned Singapore into a threat map",
+    hiddenInsight:"This may not be only about him. It may be about your brain scanning familiar places for danger, because Singapore feels small. The fear stops being 'what if I see him?' and starts being 'where can I fully relax?' Avoidance lowers anxiety short-term but teaches the brain that normal life is dangerous.",
+    needs:[
+      "A practical encounter script, not just emotional preparation.",
+      "Gradual exposure that starts with low-risk places, not the scariest ones.",
+      "Grounding tools you practise daily, not only when triggered."
+    ],
+    thisWeek:[
+      "Make a two-column list: 'places I avoid' and 'places I want back'. Rank each 1 to 10.",
+      "Reclaim one low-difficulty place with a planned exit and someone you can text.",
+      "Save an encounter script on your phone: 'I am not available for a conversation. Take care.' Then leave."
+    ],
+    modalities:["Trauma-informed CBT","Gradual exposure","Somatic grounding","EMDR preparation"]
+  },
+  {
+    key:"quiet_coper",
+    condition:(s)=>s.help_seeking_barrier>=7,
+    title:"You may be a quiet coper whose world has become smaller",
+    hiddenInsight:"You can talk about feelings, but you may not ask for help early enough. People may only see the problem once you are already overwhelmed. Not asking for help can look like strength from the outside, but internally it can become isolation.",
+    needs:[
+      "A simple way to signal distress before you shut down.",
+      "A therapist who notices avoidance and asks directly, not one who waits to be told.",
+      "Permission to ask for support without needing to have the 'right' words first."
+    ],
+    thisWeek:[
+      "Build a 1 to 5 distress scale. Decide what you will say at level 3 and level 4.",
+      "Tell one person one sentence: 'When I get activated, I need calm presence first, questions later.'",
+      "Bring this pattern to your next therapy session and ask to practise asking for help."
+    ],
+    modalities:["Assertiveness work","Emotion regulation","Attachment-focused therapy","ADHD-informed communication scripts"]
+  },
+  {
+    key:"structure_not_insight",
+    condition:(s)=>s.adhd_support>=8 && s.therapy_fit>=6,
+    title:"You may not need more insight; you may need more structure",
+    hiddenInsight:"You may already understand parts of this emotionally. The missing piece may be structure: written summaries, timelines, scripts, reminders, and clear next steps. For ADHD, progress often comes less from one big breakthrough and more from externalising the work so you do not have to hold everything in your head.",
+    needs:[
+      "A written treatment plan with goals, method, and review points.",
+      "Session summaries you can re-read between appointments.",
+      "Tiny homework. One grounding exercise, one paragraph, one exposure step."
+    ],
+    thisWeek:[
+      "At your next session, ask: 'Can we define goals, method, homework, and how we will know if this is working?'",
+      "Start a shared therapy note (Notes app is fine) with goals, triggers, tools.",
+      "End each session by writing one sentence: 'This week I will do one thing.'"
+    ],
+    modalities:["Structured CBT","ADHD-informed therapy","Trauma therapy with written plans"]
+  }
+];
+
+const FALLBACK_RESULT = {
+  title:"A clearer picture, but no single pattern dominates",
+  hiddenInsight:"Your answers do not point sharply at one pattern. That is not nothing. It often means several things are active at a low to moderate level and the system is coping by spreading the load. The risk is that nothing feels urgent enough to act on, and the situation drifts.",
+  needs:[
+    "A therapist who can help you prioritise rather than work on everything at once.",
+    "One concrete change this month, not five.",
+    "A simple way to track whether things are getting better, worse, or staying the same."
+  ],
+  thisWeek:[
+    "Pick the one dimension that bothers you most and name it out loud.",
+    "Write one paragraph: 'If nothing changed in three months, what would I regret?'",
+    "Book a consultation with one therapist who uses structured trauma methods."
+  ],
+  modalities:["Structured CBT","Trauma-informed therapy","Initial consultation to scope the work"]
+};
+
+const THERAPIST_QUESTIONS = [
+  "What trauma-specific modalities are you trained in (EMDR, CPT, trauma-focused CBT, Prolonged Exposure)?",
+  "How do you decide whether to start with stabilisation or trauma processing?",
+  "Can we set goals and review progress every 4 to 6 sessions?",
+  "Can you provide written summaries or homework because I have ADHD?",
+  "What should I do between sessions if I get triggered?"
+];
+
+const URGENT_RESULT = {
+  title:"The priority right now is staying safe",
+  hiddenInsight:"Your answers suggest the priority is not analysis or therapy planning today. It is making sure you are safe and not alone with this. Deep trauma work can wait. This cannot.",
+  needs:[
+    "Contact with a real human in the next hour, not later.",
+    "Someone who knows where you are right now.",
+    "A delay on any difficult conversation, exposure, or timeline work until you are stable."
+  ],
+  thisWeek:[
+    "Call Samaritans of Singapore at 1767, or WhatsApp CareText at 9151 1767.",
+    "Tell one trusted person: 'I am not feeling safe being alone right now.'",
+    "Go to the nearest emergency department if you cannot keep yourself safe."
+  ],
+  modalities:["Crisis support","Stabilisation","Trauma-informed care once stable"],
+  urgent:true
+};
+
+const RESOURCES = [
+  {name:"Samaritans of Singapore",url:"https://www.sos.org.sg/contact-us/",note:"24-hour hotline 1767. WhatsApp CareText 9151 1767."},
+  {name:"national mindline 1771",url:"https://mindline.sg/1771",note:"Singapore national mental health support and navigation."},
+  {name:"SAC Registered Counsellor Directory",url:"https://sacsingapore.org/registry/registered-counsellors/list-of-registered-counsellors/",note:"Singapore Association for Counselling registered counsellors."},
+  {name:"Singapore Psychological Society Directory",url:"https://singaporepsychologicalsociety.org/members-directory/",note:"SRP-registered psychologists."},
+  {name:"Talk Your Heart Out - Trauma Therapy",url:"https://talkyourheartout.com/trauma-therapy-singapore/",note:"EMDR, trauma-focused CBT, CPT, brainspotting."},
+  {name:"Colourfully",url:"https://www.colourfully.sg/",note:"ADHD coaching, anxiety, trauma therapy, EMDR."}
+];
+
+// State
+const STORAGE_KEY = "sg_trauma_clarity_v1_state";
+let state = loadState() || { view: "welcome", index: 0, answers: {} };
+
+function loadState() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch (e) { return null; }
+}
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+}
+
+function computeScores() {
+  const scores = {};
+  DIMENSIONS.forEach(d => scores[d] = 0);
+  let urgent = false;
+  QUESTIONS.forEach(q => {
+    const ans = state.answers[q.id];
+    if (ans === undefined) return;
+    const opt = q.options[ans];
+    if (!opt) return;
+    if (opt.flag === "urgent_support") urgent = true;
+    Object.entries(opt.scores || {}).forEach(([dim, val]) => {
+      scores[dim] = (scores[dim] || 0) + val;
+    });
+  });
+  if (scores.safety_risk >= 5) urgent = true;
+  return { scores, urgent };
+}
+
+function matchArchetype(scores) {
+  for (const a of ARCHETYPES) {
+    if (a.condition(scores)) return a;
+  }
+  return FALLBACK_RESULT;
+}
+
+function el(tag, attrs, children) {
+  const e = document.createElement(tag);
+  if (attrs) {
+    for (const [k, v] of Object.entries(attrs)) {
+      if (k === "class") e.className = v;
+      else if (k === "onClick") e.addEventListener("click", v);
+      else if (k === "html") e.innerHTML = v;
+      else e.setAttribute(k, v);
+    }
+  }
+  (children || []).forEach(c => {
+    if (c == null) return;
+    e.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
+  });
+  return e;
+}
+
+function renderWelcome() {
+  const app = document.getElementById("app");
+  app.innerHTML = "";
+  app.appendChild(el("h1", null, ["Trauma Clarity & Therapy Fit"]));
+  app.appendChild(el("p", { class: "lede" }, [
+    "Twenty short questions. Around twelve minutes. Designed to help you name the pattern, not diagnose it, and to clarify what kind of therapy might actually help."
+  ]));
+  app.appendChild(el("div", { class: "card" }, [
+    el("h2", null, ["Before you start"]),
+    el("p", null, ["This is not a diagnosis or a crisis tool. It is a private mirror. Nothing you select is sent anywhere. Your answers are saved locally on this device so you can return to them."])
+  ]));
+  app.appendChild(el("div", { class: "card emergency" }, [
+    el("h2", null, ["If you are not safe right now"]),
+    el("p", null, [
+      "Call Samaritans of Singapore at 1767, WhatsApp CareText at 9151 1767, or go to the nearest emergency department. You do not have to do this alone."
+    ])
+  ]));
+
+  const hasProgress = Object.keys(state.answers).length > 0;
+  const startBtn = el("button", { class: "btn primary", onClick: () => {
+    if (!hasProgress) { state.answers = {}; state.index = 0; }
+    state.view = "question";
+    saveState();
+    render();
+  }}, [hasProgress ? "Continue" : "Begin"]);
+  const resetBtn = hasProgress ? el("button", { class: "btn", onClick: () => {
+    state = { view: "welcome", index: 0, answers: {} };
+    saveState();
+    render();
+  }}, ["Start over"]) : null;
+
+  const actions = el("div", { class: "nav" }, [startBtn, resetBtn].filter(Boolean));
+  app.appendChild(actions);
+
+  app.appendChild(el("p", { class: "footnote" }, [
+    "Theory base: trauma-focused CBT, CPT, Prolonged Exposure, EMDR, stabilisation-first care, and ADHD-friendly therapy structure. All evidence-based options for trauma per APA, NICE, and VA PTSD guidance."
+  ]));
+}
+
+function renderQuestion() {
+  const app = document.getElementById("app");
+  app.innerHTML = "";
+  const q = QUESTIONS[state.index];
+  const total = QUESTIONS.length;
+  const pct = ((state.index) / total) * 100;
+
+  app.appendChild(el("div", { class: "progress" }, [
+    el("span", null, [`Question ${state.index + 1} of ${total}`]),
+    el("span", null, [`${Math.round(pct)}%`])
+  ]));
+  app.appendChild(el("div", { class: "progress-bar" }, [
+    el("div", { class: "progress-bar-fill", style: `width: ${pct}%` })
+  ]));
+
+  app.appendChild(el("div", { class: "question" }, [q.question]));
+
+  const selected = state.answers[q.id];
+  const options = el("div", { class: "options" });
+  q.options.forEach((opt, i) => {
+    const isSel = selected === i;
+    const btn = el("button", {
+      class: "option" + (isSel ? " selected" : ""),
+      onClick: () => {
+        state.answers[q.id] = i;
+        saveState();
+        render();
+      }
+    }, [opt.label]);
+    options.appendChild(btn);
+  });
+  app.appendChild(options);
+
+  const back = el("button", {
+    class: "btn",
+    onClick: () => {
+      if (state.index > 0) { state.index--; saveState(); render(); }
+      else { state.view = "welcome"; saveState(); render(); }
+    }
+  }, [state.index === 0 ? "Back to start" : "Back"]);
+
+  const isLast = state.index === total - 1;
+  const hasAnswer = selected !== undefined;
+  const next = el("button", {
+    class: "btn primary",
+    onClick: () => {
+      if (!hasAnswer) return;
+      if (isLast) { state.view = "result"; saveState(); render(); window.scrollTo(0, 0); }
+      else { state.index++; saveState(); render(); window.scrollTo(0, 0); }
+    }
+  }, [isLast ? "See result" : "Next"]);
+  if (!hasAnswer) next.disabled = true;
+
+  app.appendChild(el("div", { class: "nav" }, [back, next]));
+}
+
+function renderResult() {
+  const app = document.getElementById("app");
+  app.innerHTML = "";
+
+  const { scores, urgent } = computeScores();
+  const result = urgent ? URGENT_RESULT : matchArchetype(scores);
+
+  app.appendChild(el("div", { class: "result-headline" }, [result.title]));
+  app.appendChild(el("p", { class: "result-opener" }, [
+    urgent
+      ? "Read this first. The rest can wait."
+      : "Your answers suggest this is not you being dramatic or difficult. It is your system trying to protect you. The question is whether the protection strategy is still serving you."
+  ]));
+
+  if (!urgent) {
+    app.appendChild(el("div", { class: "card" }, [
+      el("h2", null, ["The hidden piece"]),
+      el("p", null, [result.hiddenInsight])
+    ]));
+  } else {
+    app.appendChild(el("div", { class: "card emergency" }, [
+      el("h2", null, ["What matters most"]),
+      el("p", null, [result.hiddenInsight])
+    ]));
+  }
+
+  app.appendChild(el("div", { class: "card" }, [
+    el("h2", null, ["What you may need"]),
+    el("ul", null, result.needs.map(n => el("li", null, [n])))
+  ]));
+
+  app.appendChild(el("div", { class: "card" }, [
+    el("h2", null, ["What to try this week"]),
+    el("ul", null, result.thisWeek.map(n => el("li", null, [n])))
+  ]));
+
+  if (!urgent) {
+    app.appendChild(el("div", { class: "card" }, [
+      el("h2", null, ["What kind of therapy to look for"]),
+      el("ul", null, result.modalities.map(m => el("li", null, [m])))
+    ]));
+
+    app.appendChild(el("div", { class: "card" }, [
+      el("h2", null, ["What to ask a therapist"]),
+      el("ul", null, THERAPIST_QUESTIONS.map(q => el("li", null, [q])))
+    ]));
+  }
+
+  app.appendChild(el("div", { class: "card resources" }, [
+    el("h2", null, ["Singapore resources"]),
+    el("ul", null, RESOURCES.map(r =>
+      el("li", null, [
+        el("a", { href: r.url, target: "_blank", rel: "noopener" }, [r.name]),
+        document.createTextNode(" — " + r.note)
+      ])
+    ))
+  ]));
+
+  const restart = el("button", {
+    class: "btn",
+    onClick: () => {
+      if (confirm("Clear your answers and start over?")) {
+        state = { view: "welcome", index: 0, answers: {} };
+        saveState();
+        render();
+      }
+    }
+  }, ["Start over"]);
+  const review = el("button", {
+    class: "btn",
+    onClick: () => {
+      state.view = "question";
+      state.index = 0;
+      saveState();
+      render();
+      window.scrollTo(0, 0);
+    }
+  }, ["Review answers"]);
+
+  app.appendChild(el("div", { class: "nav" }, [review, restart]));
+
+  app.appendChild(el("p", { class: "footnote" }, [
+    "This is a private reflection tool, not a diagnosis. It does not replace a clinician. If anything here lands hard, that is information worth taking to therapy, not a verdict."
+  ]));
+}
+
+function render() {
+  if (state.view === "welcome") renderWelcome();
+  else if (state.view === "question") renderQuestion();
+  else if (state.view === "result") renderResult();
+}
+
+render();
+</script>
+</body>
+</html>
